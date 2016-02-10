@@ -4,7 +4,10 @@
     "description": "A basic annotation-based ACL package",
     "keywords": [
         "SitePoint",
-        "Rauth"
+        "Rauth",
+        "ACL",
+        "authorization",
+        "access control"
     ],
     "homepage": "https://github.com/SitePoint/Rauth",
     "license": "MIT",
@@ -17,10 +20,11 @@
         }
     ],
     "require": {
-        "php" : "~5.5|~7.0"
+        "php" : "~7.0"
     },
     "require-dev": {
-        "phpunit/phpunit" : "4.*",
+        "symfony/var-dumper": "~3",
+        "phpunit/phpunit" : "~5",
         "scrutinizer/ocular": "~1.1",
         "squizlabs/php_codesniffer": "~2.3"
     },
