@@ -134,35 +134,9 @@ This tag will take precedence if a match is found. So in the example above - if 
 
 > The banhammer wields absolute authority and does not react to `@auth-mode`. Bans must be completely cleared before other permissions are even to be looked at.
 
-## Nope
+## Reason
 
-@todo Not yet implemented!
-
-To decide what happens when `Rauth::authorize()` returns false, call the `Rauth::nope()` method:
-
-```php
-$rauth->nope(function() use ($di) {
-    $di->flasher->error('You cannot go there, man!');
-    header('Location: /'); // redirect to home page
-    die();
-});
-```
-
-The `nope` method accepts a callback which is autoinvoked when `false` would be called. Can also be a `Class::method` string (see below), or an array like `['class', 'method']` where class is either the class name or the class instance, and method is a string. Note that if the class being used as a Nope has some `@auth` blocks of its own, those are ignored.
-
-> Using a class as a Nope will ignore its `@auth` tags.
-
-If you'd like to specify a different effect for a particular class or method, define the `@auth-nope` tag. That one can't really be a callback, but can be a `Class::method` string or an array, like:
-
-```php
-/*
-* ...
-* @auth-nope ErrorController::CantDoThatBro
-* // or
-* @auth-nope ['ErrorController', 'CantDoThatBro']
-* ...
-*/
-```
+@todo Figure out how to smoothly implement a reason logger without making the lib heavier
 
 ## Caching
 

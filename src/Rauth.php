@@ -5,7 +5,7 @@ namespace SitePoint;
 use SitePoint\Rauth\ArrayCache;
 use SitePoint\Rauth\Cache;
 
-class Rauth
+class Rauth implements RauthInterface
 {
     const REGEX = '/@auth-([\w-]+)\s?\s(.+)/';
 
@@ -38,9 +38,9 @@ class Rauth
      * Default is MODE_OR
      *
      * @param string $mode
-     * @return Rauth
+     * @return RauthInterface
      */
-    public function setDefaultMode(string $mode) : Rauth
+    public function setDefaultMode(string $mode = null) : RauthInterface
     {
         if (!in_array($mode, self::MODES)) {
             throw new \InvalidArgumentException(
@@ -56,9 +56,9 @@ class Rauth
      * Inject Cache instance
      *
      * @param Cache $c
-     * @return $this
+     * @return RauthInterface
      */
-    public function setCache(Cache $c)
+    public function setCache(Cache $c) : RauthInterface
     {
         $this->cache = $c;
 
@@ -257,11 +257,6 @@ class Rauth
             default:
                 throw new \InvalidArgumentException('Durrrr');
         }
-
-    }
-
-    public function nope()
-    {
 
     }
 }
