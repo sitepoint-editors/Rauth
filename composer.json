@@ -20,8 +20,7 @@
         }
     ],
     "require": {
-        "php" : "~7.0",
-        "hhvm": "~3"
+        "php" : "~7.0"
     },
     "require-dev": {
         "symfony/var-dumper": "~3",
