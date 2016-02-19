@@ -30,7 +30,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SitePoint\\Rauth\\": "src"
+            "SitePoint\\": "src"
         }
     },
     "autoload-dev": {
@@ -39,7 +39,8 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "vendor/bin/phpunit",
+        "cs": "vendor/bin/phpcs --standard=psr2 src/"
     },
     "extra": {
         "branch-alias": {

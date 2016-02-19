@@ -47,3 +47,4 @@ packages/*
 .vagrant/*
 
 .env
+index.php
