@@ -6,7 +6,7 @@ final class ArrayCache implements Cache
 {
     private $data = [];
 
-    public function __construct(array $data = null)
+    public function __construct(array $data = [])
     {
         $this->data = $data;
     }
