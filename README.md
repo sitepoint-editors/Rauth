@@ -20,7 +20,7 @@ I wanted:
 
 Via Composer
 
-``` bash
+```bash
 $ composer require sitepoint/rauth
 ```
 
@@ -30,7 +30,7 @@ Best used before a dispatcher.
 
 Boostrap Rauth somewhere (preferably a boostrap file, or wherever you configure your DI container) like so:
 
-```
+```php
 <?php
 
 $rauth = new Rauth();
@@ -62,13 +62,13 @@ class MyProtectedClass
 
 To check if a user has access to a given class / method:
 
-```
+```php
 $allowed = $rauth->authorize($classInstanceOrName, $methodName, $attributes);
 ```
 
 `$attributes` will be an array you build - this depends entirely on your implementation of user attributes. Maybe you're using something like [Gatekeeper](https://github.com/psecio/gatekeeper) and have immediate access to `groups` and/or `permissions` on a `User` entity, and maybe you have a totally custom system. What matters is that you build an array which contains the attributes like so:
 
-```
+```php
 $attributes = [
     'groups' => ['admin']
 ];
@@ -93,7 +93,7 @@ You get the drift.
 
 Rauth will then parse the `@auth` lines and save the attributes required in an array similar to that, like so:
 
-```
+```php
 $requirements = [
     'mode' => RAUTH::OR,
     'groups' => ['admin', 'reg-user'],
@@ -123,7 +123,7 @@ The mode `NONE` will make `Rauth::authorize()` return `true` only if none of the
 
 Another option you can use is the `@auth-ban` tag:
 
-```
+```php
 /*
 * ...
 * @auth-ban-groups guest, blocked
@@ -141,7 +141,7 @@ This tag will take precedence if a match is found. So in the example above - if 
 
 To decide what happens when `Rauth::authorize()` returns false, call the `Rauth::nope()` method:
 
-```
+```php
 $rauth->nope(function() use ($di) {
     $di->flasher->error('You cannot go there, man!');
     header('Location: /'); // redirect to home page
@@ -155,7 +155,7 @@ The `nope` method accepts a callback which is autoinvoked when `false` would be 
 
 If you'd like to specify a different effect for a particular class or method, define the `@auth-nope` tag. That one can't really be a callback, but can be a `Class::method` string or an array, like:
 
-```
+```php
 /*
 * ...
 * @auth-nope ErrorController::CantDoThatBro
@@ -179,7 +179,7 @@ In order to avoid having to use the `authorize` call manually, it's best to tie 
 
 ## Testing
 
-``` bash
+```bash
 composer test
 ```
 
