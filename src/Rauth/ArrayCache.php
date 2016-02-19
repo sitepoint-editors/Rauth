@@ -4,7 +4,12 @@ namespace SitePoint\Rauth;
 
 final class ArrayCache implements Cache
 {
-    private $data;
+    private $data = [];
+
+    public function __construct(array $data = null)
+    {
+        $this->data = $data;
+    }
 
     public function get(string $key)
     {
