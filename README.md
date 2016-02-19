@@ -5,7 +5,6 @@
 [![Build Status][ico-travis]][link-travis]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
 [![Quality Score][ico-code-quality]][link-code-quality]
-[![Total Downloads][ico-downloads]][link-downloads]
 
 Rauth is a simple package for parsing the `@auth-*` lines of a docblock. These are then matched with some permissions and groups and all together make a half decent automatic authorization flow. See basic usage below.
 
@@ -202,11 +201,10 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/SitePoint/Rauth.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/SitePoint/Rauth.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/SitePoint/Rauth
-[link-travis]: https://travis-ci.org/SitePoint/Rauth
-[link-scrutinizer]: https://scrutinizer-ci.com/g/SitePoint/Rauth/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/SitePoint/Rauth
-[link-downloads]: https://packagist.org/packages/SitePoint/Rauth
+[link-packagist]: https://packagist.org/packages/sitepoint/rauth
+[link-travis]: https://travis-ci.org/sitepoint/Rauth
+[link-scrutinizer]: https://scrutinizer-ci.com/g/sitepoint/Rauth/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/sitepoint/Rauth
 [link-author]: https://github.com/swader
 [link-docs]: http://readthedocs.org
 
