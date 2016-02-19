@@ -107,14 +107,14 @@ class Rauth
         if (!$this->getCache()->has($className)) {
             $r = new \ReflectionClass($className);
             preg_match_all(self::REGEX, $r->getDocComment(), $matchC);
-            $this->getCache()->set($className, $this->normalize($matchC));
+            $this->getCache()->set($className, $this->normalize((array)$matchC));
         }
 
         // Method auths haven't been cached yet
         if (!$this->getCache()->has($sig)) {
             $r = new \ReflectionMethod($className, $method);
             preg_match_all(self::REGEX, $r->getDocComment(), $matchC);
-            $this->getCache()->set($sig, $this->normalize($matchC));
+            $this->getCache()->set($sig, $this->normalize((array)$matchC));
         }
 
         return ($this->getCache()->get($sig) == [])
@@ -223,7 +223,6 @@ class Rauth
                 }
 
                 return $required == $matches;
-                break;
             case self::MODE_NONE:
                 // There must be no overlap between any of the array values
 
@@ -240,7 +239,6 @@ class Rauth
                 }
 
                 return true;
-                break;
             case self::MODE_OR:
                 // At least one match must be present
                 foreach ($auth as $set => $values) {
@@ -256,10 +254,8 @@ class Rauth
                 }
 
                 return false;
-                break;
             default:
                 throw new \InvalidArgumentException('Durrrr');
-                break;
         }
 
     }
