@@ -1,5 +1,5 @@
 {
-    "name": "SitePoint/Rauth",
+    "name": "sitepoint/rauth",
     "type": "library",
     "description": "A basic annotation-based ACL package",
     "keywords": [
