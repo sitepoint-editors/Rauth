@@ -178,8 +178,8 @@ class Rauth
         $class,
         string $method = null,
         array $attr = []
-    ) : bool
-    {
+    ) : bool {
+    
         $auth = $this->extractAuth($class, $method);
 
         // Class / method has no rules - allow all
@@ -196,9 +196,9 @@ class Rauth
             if (strpos($set, 'ban-') === 0) {
                 $key = str_replace('ban-', '', $set);
                 if (isset($attr[$key]) && array_intersect(
-                        (array)$attr[$key],
-                        $values
-                    )
+                    (array)$attr[$key],
+                    $values
+                )
                 ) {
                     return false;
                 }
@@ -229,11 +229,11 @@ class Rauth
 
                 foreach ($auth as $set => $values) {
                     if (isset($attr[$set]) && count(
-                            array_intersect(
-                                (array)$attr[$set],
-                                $values
-                            )
+                        array_intersect(
+                            (array)$attr[$set],
+                            $values
                         )
+                    )
                     ) {
                         return false;
                     }
@@ -245,11 +245,11 @@ class Rauth
                 // At least one match must be present
                 foreach ($auth as $set => $values) {
                     if (isset($attr[$set]) && count(
-                            array_intersect(
-                                (array)$attr[$set],
-                                $values
-                            )
+                        array_intersect(
+                            (array)$attr[$set],
+                            $values
                         )
+                    )
                     ) {
                         return true;
                     }
