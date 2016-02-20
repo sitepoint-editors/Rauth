@@ -18,6 +18,9 @@ checks:
         fix_doc_comments: true
 
 build:
+    environment:
+            php:
+                version: 7.0
     tests:
         override:
             -
