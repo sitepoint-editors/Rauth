@@ -62,7 +62,12 @@ class MyProtectedClass
 To check if a user has access to a given class / method:
 
 ```php
+try {
 $allowed = $rauth->authorize($classInstanceOrName, $methodName, $attributes);
+} catch (AuthException) {
+    $e->getType(); // will be "ban", "and", "or", etc...
+    $e->getReasons(); // an array of Reason objects with details
+}
 ```
 
 `$attributes` will be an array you build - this depends entirely on your implementation of user attributes. Maybe you're using something like [Gatekeeper](https://github.com/psecio/gatekeeper) and have immediate access to `groups` and/or `permissions` on a `User` entity, and maybe you have a totally custom system. What matters is that you build an array which contains the attributes like so:
@@ -104,7 +109,13 @@ $requirements = [
 ];
 ```
 
-Depending on the mode (see below), Rauth will return either `true` or `false` when you call `authorize()`.
+`authorize` will return `true` if all is well.
+
+If the `authorize` check fails, it will throw an `AuthException`. The `AuthException` will have a `getType` getter which will return a string value of the mode in which the failure happened - be it `ban`, `and`, `or`, `none`, or a custom mode altogether (see modes below). It will also have a `getReasons` getter which provides an array of `Reason` objects. Each object has the following public properties:
+
+- `group`: defines which `@auth-{group}` triggered the exception, e.g. "groups", "permissions", "banana", or whatever else
+- `has`: an array of the attributes provided for that group. If none were provided, empty array.
+- `needs`: an array of attributes needed / prohibited, and compared against `has`.
 
 ### Available Modes
 
@@ -137,10 +148,6 @@ Another option you can use is the `@auth-ban` tag:
 This tag will take precedence if a match is found. So in the example above - if a user is an admin, but is a member of the `blocked` group, they will be denied access. All `ban` matches MUST be zero if the user is to proceed, regardless of all other matches.
 
 > The banhammer wields absolute authority and does not react to `@auth-mode`. Bans must be completely cleared before other permissions are even to be looked at.
-
-## Reason
-
-@todo Figure out how to smoothly implement a reason logger without making the lib heavier
 
 ## Caching
 
@@ -185,5 +192,3 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [link-code-quality]: https://scrutinizer-ci.com/g/sitepoint/Rauth
 [link-author]: https://github.com/swader
 [link-docs]: http://readthedocs.org
-
-[nofw]: nofw

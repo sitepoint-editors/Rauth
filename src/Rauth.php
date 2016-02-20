@@ -4,6 +4,8 @@ namespace SitePoint;
 
 use SitePoint\Rauth\ArrayCache;
 use SitePoint\Rauth\Cache;
+use SitePoint\Rauth\Exception\AuthException;
+use SitePoint\Rauth\Exception\Reason;
 
 class Rauth implements RauthInterface
 {
@@ -173,6 +175,7 @@ class Rauth implements RauthInterface
      * @param array $attr
      * @return bool
      * @throws \InvalidArgumentException
+     * @throws AuthException
      */
     public function authorize(
         $class,
@@ -189,40 +192,40 @@ class Rauth implements RauthInterface
 
         // Store mode, remove from auth array
         $mode = $auth['mode'] ?? $this->defaultMode;
+        $e = new AuthException($mode);
         unset($auth['mode']);
 
         // Handle bans, remove them from auth
-        foreach ($auth as $set => $values) {
-            if (strpos($set, 'ban-') === 0) {
-                $key = str_replace('ban-', '', $set);
-                if (isset($attr[$key]) && array_intersect(
-                    (array)$attr[$key],
-                    $values
-                )
-                ) {
-                    return false;
-                }
-                unset($auth[$set]);
-            }
-        }
+        $this->handleBans($auth, $attr);
 
         switch ($mode) {
             case self::MODE_AND:
-                $required = 0;
-                $matches = 0;
                 // All values in all arrays must match
                 foreach ($auth as $set => $values) {
                     if (!isset($attr[$set])) {
-                        return false;
+                        $e->addReason(new Reason(
+                            $set,
+                            [],
+                            $values
+                        ));
+                    } else {
+                        $attr[$set] = (array)$attr[$set];
+                        sort($values);
+                        sort($attr[$set]);
+                        if ($values != $attr[$set]) {
+                            $e->addReason(new Reason(
+                                $set,
+                                $attr[$set],
+                                $values
+                            ));
+                        }
                     }
-                    $attr[$set] = (array)$attr[$set];
-                    $required++;
-                    sort($values);
-                    sort($attr[$set]);
-                    $matches += (int)($values == $attr[$set]);
                 }
 
-                return $required == $matches;
+                if ($e->hasReasons()) {
+                    throw $e;
+                }
+                return true;
             case self::MODE_NONE:
                 // There must be no overlap between any of the array values
 
@@ -234,10 +237,17 @@ class Rauth implements RauthInterface
                         )
                     )
                     ) {
-                        return false;
+                        $e->addReason(new Reason(
+                            $set,
+                            (array)($attr[$set] ?? []),
+                            $values
+                        ));
                     }
                 }
 
+                if ($e->hasReasons()) {
+                    throw $e;
+                }
                 return true;
             case self::MODE_OR:
                 // At least one match must be present
@@ -251,11 +261,39 @@ class Rauth implements RauthInterface
                     ) {
                         return true;
                     }
+                    $e->addReason(new Reason(
+                        $set,
+                        (array)($attr[$set] ?? []),
+                        $values
+                    ));
                 }
 
-                return false;
+                throw $e;
             default:
                 throw new \InvalidArgumentException('Durrrr');
+        }
+
+    }
+
+    private function handleBans(&$auth, $attr)
+    {
+        foreach ($auth as $set => $values) {
+            if (strpos($set, 'ban-') === 0) {
+                $key = str_replace('ban-', '', $set);
+                if (isset($attr[$key]) && array_intersect(
+                    (array)$attr[$key],
+                    $values
+                )
+                ) {
+                    $exception = new AuthException('ban');
+                    throw $exception->addReason(new Reason(
+                        $key,
+                        (array)$attr[$key],
+                        $values
+                    ));
+                }
+                unset($auth[$set]);
+            }
         }
 
     }

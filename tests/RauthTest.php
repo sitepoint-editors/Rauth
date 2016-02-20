@@ -3,6 +3,8 @@
 namespace SitePoint\Rauth\Tests;
 
 use SitePoint\Rauth;
+use SitePoint\Rauth\Exception\AuthException;
+use SitePoint\Rauth\Exception\Reason;
 
 /**
  * Class RauthTest
@@ -47,8 +49,8 @@ class RauthTest extends \PHPUnit_Framework_TestCase
 
         $set1 = [
             // Class-only tests
-            [$c1, null, [], false], // anon user, class auths, fails
-            [$c1, null, ['groups' => [], 'permissions' => []], false], // weirdly and badly configured user, cannot pass
+            [$c1, null, [], 'exception'], // anon user, class auths, fails
+            [$c1, null, ['groups' => [], 'permissions' => []], 'exception'], // weirdly and badly configured user, cannot pass
             [$c1, null, ['groups' => ['admin']], true], // user with group admin should pass
             [$c1, null, ['permissions' => ['cook', 'clean']], true], // user with these permissions should pass
             [$c1, null, ['permissions' => ['cook', 'kill']], true], // user with these permissions should pass even though one doesn't exist
@@ -57,17 +59,17 @@ class RauthTest extends \PHPUnit_Framework_TestCase
         ];
 
         $method = 'someTest';
-        $set1[] = [$c1, $method, [], false];
-        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], false];
-        $set1[] = [$c1, $method, ['groups' => ['admin']], false];
+        $set1[] = [$c1, $method, [], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['admin']], 'exception'];
         $set1[] = [$c1, $method, ['groups' => ['reg-user']], true];
         $set1[] = [$c1, $method, ['groups' => ['paying customers', 'reg-user']], true];
         $set1[] = [$c1, $method, ['groups' => ['paying customers']], true];
         $set1[] = [$c1, $method, ['groups' => 'paying customers'], true];
-        $set1[] = [$c1, $method, ['permissions' => ['cook', 'clean']], false];
-        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill']], false]; // user with these permissions should pass even though one doesn't exist
-        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill'], 'banana' => ['yellow']], false]; // made up categories have no effect
-        $set1[] = [$c1, $method, ['groups' => 'admin'], false];
+        $set1[] = [$c1, $method, ['permissions' => ['cook', 'clean']], 'exception'];
+        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill']], 'exception']; // user with these permissions should pass even though one doesn't exist
+        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill'], 'banana' => ['yellow']], 'exception']; // made up categories have no effect
+        $set1[] = [$c1, $method, ['groups' => 'admin'], 'exception'];
 
         $method = 'someOtherTest';
         $set1[] = [$c1, $method, [], true];
@@ -76,37 +78,37 @@ class RauthTest extends \PHPUnit_Framework_TestCase
         $set1[] = [$c1, $method, ['groups' => ['reg-user']], true];
         $set1[] = [$c1, $method, ['groups' => ['paying customers', 'reg-user']], true];
         $set1[] = [$c1, $method, ['groups' => ['paying customers']], true];
-        $set1[] = [$c1, $method, ['groups' => ['foo']], false];
-        $set1[] = [$c1, $method, ['groups' => ['foo', 'bar']], false];
+        $set1[] = [$c1, $method, ['groups' => ['foo']], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['foo', 'bar']], 'exception'];
         $set1[] = [$c1, $method, ['groups' => 'paying customers'], true];
-        $set1[] = [$c1, $method, ['groups' => 'foo'], false];
+        $set1[] = [$c1, $method, ['groups' => 'foo'], 'exception'];
         $set1[] = [$c1, $method, ['permissions' => ['cook', 'clean']], true];
         $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill']], true]; // user with these permissions should pass even though one doesn't exist
-        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill'], 'banana' => ['yellow'], 'groups' => 'foo'], false]; // made up categories have no effect
+        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill'], 'banana' => ['yellow'], 'groups' => 'foo'], 'exception']; // made up categories have no effect
 
         $method = 'anotherTest';
-        $set1[] = [$c1, $method, [], false];
-        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], false];
-        $set1[] = [$c1, $method, ['groups' => ['admin']], false];
-        $set1[] = [$c1, $method, ['groups' => ['reg-user']], false];
-        $set1[] = [$c1, $method, ['groups' => ['paying customers', 'reg-user']], false];
-        $set1[] = [$c1, $method, ['groups' => ['paying customers']], false];
-        $set1[] = [$c1, $method, ['groups' => ['foo']], false];
-        $set1[] = [$c1, $method, ['groups' => ['foo', 'bar']], false];
-        $set1[] = [$c1, $method, ['groups' => 'paying customers'], false];
-        $set1[] = [$c1, $method, ['groups' => 'foo'], false];
-        $set1[] = [$c1, $method, ['permissions' => ['cook', 'clean']], false];
-        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill']], false]; // user with these permissions should pass even though one doesn't exist
-        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill'], 'banana' => ['yellow'], 'groups' => 'foo'], false]; // made up categories have no effect
+        $set1[] = [$c1, $method, [], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['admin']], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['reg-user']], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['paying customers', 'reg-user']], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['paying customers']], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['foo']], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => ['foo', 'bar']], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => 'paying customers'], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => 'foo'], 'exception'];
+        $set1[] = [$c1, $method, ['permissions' => ['cook', 'clean']], 'exception'];
+        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill']], 'exception']; // user with these permissions should pass even though one doesn't exist
+        $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill'], 'banana' => ['yellow'], 'groups' => 'foo'], 'exception']; // made up categories have no effect
         $set1[] = [$c1, $method, ['banana' => 'whatever', 'name' => 'Bruno'], true];
         $set1[] = [$c1, $method, ['banana' => 'whatever', 'name' => 'Bruno', 'groups' => []], true];
-        $set1[] = [$c1, $method, ['banana' => 'whatever', 'name' => 'Bruno', 'groups' => ['blocked']], false];
-        $set1[] = [$c1, $method, ['name' => 'Bruno', 'groups' => []], false];
-        $set1[] = [$c1, $method, ['banana' => 'whatever', 'groups' => []], false];
+        $set1[] = [$c1, $method, ['banana' => 'whatever', 'name' => 'Bruno', 'groups' => ['blocked']], 'exception'];
+        $set1[] = [$c1, $method, ['name' => 'Bruno', 'groups' => []], 'exception'];
+        $set1[] = [$c1, $method, ['banana' => 'whatever', 'groups' => []], 'exception'];
         
         $method = 'noAuthTest';
-        $set1[] = [$c1, $method, [], false];
-        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], false];
+        $set1[] = [$c1, $method, [], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], 'exception'];
         $set1[] = [$c1, $method, ['groups' => ['admin']], true];
         $set1[] = [$c1, $method, ['permissions' => ['cook', 'clean']], true];
         $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill']], true];
@@ -114,8 +116,8 @@ class RauthTest extends \PHPUnit_Framework_TestCase
         $set1[] = [$c1, $method, ['groups' => 'admin'], true];
 
         $method = 'noDocblockTest';
-        $set1[] = [$c1, $method, [], false];
-        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], false];
+        $set1[] = [$c1, $method, [], 'exception'];
+        $set1[] = [$c1, $method, ['groups' => [], 'permissions' => []], 'exception'];
         $set1[] = [$c1, $method, ['groups' => ['admin']], true];
         $set1[] = [$c1, $method, ['permissions' => ['cook', 'clean']], true];
         $set1[] = [$c1, $method, ['permissions' => ['cook', 'kill']], true];
@@ -143,9 +145,21 @@ class RauthTest extends \PHPUnit_Framework_TestCase
     public function testAuthorizeDefault($class, $method, $attributes, $success)
     {
         $r = new Rauth();
-        $this->assertTrue(
-            $r->authorize($class, $method, $attributes) === $success
-        );
+        if (is_bool($success)) {
+            $this->assertTrue(
+                $r->authorize($class, $method, $attributes) === $success
+            );
+        } else {
+            try {
+                $r->authorize($class, $method, $attributes);
+                $this->fail('AuthException not caught');
+            } catch (AuthException $e) {
+                $mode = $r->extractAuth($class, $method)['mode'] ?? Rauth::MODE_OR;
+                $this->assertTrue(in_array($e->getType(), ['ban', $mode]));
+                //dump($e->getType());
+                //dump($e->getReasons());
+            }
+        }
     }
 
     public function testInvalidMode()
