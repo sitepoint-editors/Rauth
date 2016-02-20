@@ -75,16 +75,20 @@ $attributes = [
 
 or maybe something like this:
 
+```php
 $attributes = [
     'permissions' => ['post-write', 'post-read']
 ];
+```
 
 or even something like this:
 
+```php
 $attributes = [
     'groups' => ['admin', 'reg-user'],
     'permissions' => ['post-write', 'post-read']
 ];
+```
 
 You get the drift.
 
