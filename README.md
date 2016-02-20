@@ -6,7 +6,7 @@
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
 [![Quality Score][ico-code-quality]][link-code-quality]
 
-Rauth is a simple package for parsing the `@auth-*` lines of a docblock. These are then matched with some permissions and groups and all together make a half decent automatic authorization flow. See basic usage below.
+Rauth is a simple package for parsing the `@auth-*` lines of a docblock. These are then matched with some arbitrary attributes like "groups" or "permissions" or anything else you choose. See basic usage below.
 
 ## Why?
 
@@ -20,14 +20,12 @@ I wanted:
 Via Composer
 
 ```bash
-$ composer require sitepoint/rauth
+composer require sitepoint/rauth
 ```
 
 ## Basic Usage
 
-Best used before a dispatcher.
-
-Boostrap Rauth somewhere (preferably a boostrap file, or wherever you configure your DI container) like so:
+Boostrap Rauth somewhere (preferably a bootstrap file, or wherever you configure your DI container) like so:
 
 ```php
 <?php
@@ -57,14 +55,14 @@ class MyProtectedClass
 {
 ```
 
-"Groups" and "Permissions" are arbitrary *attributes* a user can have - you can use "bananas" or "squirrel-hammocks" if you want. All that matters is that you separate them with commas and that the tag starts with `@auth-`.
+"Groups" and "Permissions" are arbitrary *attributes* a user can have - you can use "bananas" or "squirrel-hammocks" if you want. All that matters is that you separate their values with commas and that the tag starts with `@auth-`.
 
 To check if a user has access to a given class / method:
 
 ```php
 try {
-$allowed = $rauth->authorize($classInstanceOrName, $methodName, $attributes);
-} catch (AuthException) {
+    $allowed = $rauth->authorize($classInstanceOrName, $methodName, $attributes);
+} catch (\SitePoint\Rauth\Exception\AuthException $e) {
     $e->getType(); // will be "ban", "and", "or", etc...
     $e->getReasons(); // an array of Reason objects with details
 }
@@ -153,13 +151,31 @@ This tag will take precedence if a match is found. So in the example above - if 
 
 Rauth accepts in its constructor a Cache object which needs to adhere to the `src/Rauth/Cache.php` interface. It defaults to ArrayCache, which is a fake cache that doesn't really improve speed by any margin and is mainly used during development.
 
-@todo Also maybe add a "parse in folder" feature that chews through all classes and saves the tags into cache?
+Note that you *can* pass in a ready-made array into the ArrayCache (constructor accepts data), if you have it. This way, you'd hydrate the cache for Rauth and it wouldn't have to manually parse every class it tries to authorize:
+
+```php
+$ac = new ArrayCache(
+    [
+        'SomeClass' => [
+            'mode' => RAUTH::OR,
+            'groups' => ['admin', 'reg-user'],
+            'permissions' => ['post-write', 'post-read'],
+        ],
+        'SomeClass::someMethod' => [
+            'mode' => RAUTH::AND,
+            'groups' => ['admin'],
+        ],
+    ]
+);
+
+$rauth = new Rauth($ac);
+```
 
 ## Best Practice
 
 In order to avoid having to use the `authorize` call manually, it's best to tie it into a Dependency Injection container or a route dispatcher. That way, you can easily put your requirements into the docblocks of a controller, and build the attributes at bootstrapping time, and everything else will be automatic. For an example of this, see the [nofw][nofw] skeleton.
 
-@todo Get link etc up and running
+@todo This example will be added soon
 
 ## Testing
 
