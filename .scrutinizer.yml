@@ -25,3 +25,6 @@ build:
         override:
             -
                 command: vendor/bin/phpunit
+                coverage:
+                   file: 'coverage.clover'
+                   format: 'php-clover'
