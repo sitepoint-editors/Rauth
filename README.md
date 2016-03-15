@@ -15,6 +15,17 @@ I wanted:
 - to be able to define "rules" without strapping my routes to a bunch of regex
 - to be able to change routes on a whim and make the rules apply app-wide, API mode or DOM mode, without having to change anything. By putting permissions onto classes and methods, I have more control over an app's setup and its roles.
 
+## Annotations Are Bad &trade;
+
+Somewhat "controversially", Rauth defaults to using annotations to control access. No matter which camp you're in regarding annotations in PHP, here's why their use in Rauth's case is nowhere near as wrong as [some](https://www.reddit.com/r/PHP/comments/48m8yo/rauth_simple_annotationbased_package_for_limiting/) make it out to be:
+
+- as you'll usually control access to controllers and actions in a typical MVC app, hard-coupling them to Rauth like this is not only harmless (controllers almost always need to be [completely discarded and rewritten](http://tldrify.com/fon) if you're changing frameworks or the app's structure in a major way), it also provides you with instant insight into which class / method has which ACL requirements
+
+- if you don't like annotations, you can feed Rauth a pre-cached or pre-parsed list of permissions and classes they apply to, so the whole annotations issue can be avoided completely
+
+- there's no more fear of annotations slowing things down because PHP needs to reflect into the classes in question and extract them every time. With OpCache on at all times, this only happens once, and with Rauth's own cache support, this can even be saved elsewhere and the annotation reading pass can be avoided altogether.
+
+
 ## Install
 
 Via Composer
