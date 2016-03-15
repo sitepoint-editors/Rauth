@@ -173,7 +173,7 @@ $rauth = new Rauth($ac);
 
 ## Best Practice
 
-In order to avoid having to use the `authorize` call manually, it's best to tie it into a Dependency Injection container or a route dispatcher. That way, you can easily put your requirements into the docblocks of a controller, and build the attributes at bootstrapping time, and everything else will be automatic. For an example of this, see the [nofw][nofw] skeleton.
+In order to avoid having to use the `authorize` call manually, it's best to tie it into a Dependency Injection container or a route dispatcher. That way, you can easily put your requirements into the docblocks of a controller, and build the attributes at bootstrapping time, and everything else will be automatic. For an example of this, see the [nofw](https://github.com/Swader/nofw) skeleton.
 
 @todo This example will be added soon
 
